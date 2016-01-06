@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Search from './search';
 import SearchResults from './search-results';
+import NowPlaying from './now-playing';
 
 export default class App extends Component {
 
@@ -9,12 +10,20 @@ export default class App extends Component {
 
     this.state = {
       results: [],
-      term: ""
+      term: "",
+      nowPlaying: null
     };
   }
 
   onSearch(term) {
-    this.setState({ term: term });
+    this.setState({
+      term: term,
+      nowPlaying: null
+    });
+  }
+
+  onNowPlaying(videoId) {
+    this.setState({ nowPlaying: videoId });
   }
 
   render() {
@@ -22,7 +31,9 @@ export default class App extends Component {
       <div>
         <h1>{this.state.term}</h1>
         <Search search={this.onSearch.bind(this)}/>
-        <SearchResults term={this.state.term}/>
+        { !this.state.nowPlaying ?
+            <SearchResults term={this.state.term} nowPlaying={this.onNowPlaying.bind(this)}/> : null }
+        { this.state.nowPlaying ? <NowPlaying nowPlaying={this.state.nowPlaying} /> : null}
       </div>
     );
   }
