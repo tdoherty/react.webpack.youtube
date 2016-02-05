@@ -18,7 +18,7 @@ export default class Search extends Component {
     e.preventDefault();
 
     this.props.search(this.state.term);
-    this.setState({term: ""});
+    // this.setState({term: ""});
   }
 
   render() {
