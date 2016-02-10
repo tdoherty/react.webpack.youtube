@@ -1,57 +1,14 @@
 import React, { Component } from 'react';
-import $ from 'jquery';
 import moment from 'moment';
 
 export default class SearchResults extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      results: [],
-      startIndex: 1,
-      maxResults: 20,
-      term: props.term
-    };
-  }
-
-  componentWillReceiveProps(props) {
-    this.setState({ term: props.term });
-    this.doSearch(props);
-  }
-
-  componentWillMount() {
-    this.doSearch(this.props);
   }
 
   handleNowPlaying(video) {
     this.props.onNowPlaying(video);
-  }
-
-  doSearch(nextProps) {
-    return $.get(this.url(nextProps)).done(this.getVideos.bind(this));
-  }
-
-  url (nextProps) {
-    return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${nextProps.term}&maxResults=${this.state.maxResults}&key=${this.props.ytKey}`;
-  }
-
-  getVideos(searchResults) {
-    var videoIds = searchResults.items.reduce((prev, curr, idx) => prev + (prev ? ',' : '') + curr.id.videoId, '');
-    var url = `https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id=${videoIds}&key=${this.props.ytKey}`;
-    this.searchResults = searchResults; //for use later, without a setState call
-    $.get(url).done(this.onSearchComplete.bind(this));
-  }
-
-  onSearchComplete(videos) {
-    var completeResults = videos.items.map(video => {
-      var searchResult = this.searchResults.items.find(result => result.id.videoId === video.id);
-      if (searchResult) {
-        video.snippet = searchResult.snippet;
-      }
-      return video;
-    });
-    this.setState({ results: completeResults });
   }
 
   render() {
@@ -59,7 +16,7 @@ export default class SearchResults extends Component {
       <section>
         <div className="primary-col">
           <ul className="unstyled" id="searchResults">
-            {this.state.results.map((el, index) => {
+            {this.props.searchResults.map((el, index) => {
               var videoUrl = `#/nowplaying/${el.id}`;
               // var duration = moment.duration(el.contentDetails.duration).asMinutes();
               var duration = moment.utc(moment.duration(el.contentDetails.duration).asMilliseconds()).format("HH:mm:ss");
@@ -85,7 +42,7 @@ export default class SearchResults extends Component {
                         <a href={videoUrl} title={el.snippet.title}>{el.snippet.title}</a>
                       </h5>
 
-                      <p className="yt-lockup2-meta"> 
+                      <p className="yt-lockup2-meta">
                         {/*by <strong>{el.authorName}</strong>
                         <span className="metadata-separator">•</span>
                         1 year ago*/}

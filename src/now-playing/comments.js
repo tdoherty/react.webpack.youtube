@@ -1,43 +1,18 @@
 import React, { Component } from 'react';
-import $ from 'jquery';
 
 export default class Comments extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      results: { items: [] }
-    };
-
-    this.fetchComments(this.props);
-  }
-
-  componentWillReceiveProps(props) {
-    this.setState({ videoId: props.nowPlaying.id });
-    this.fetchComments(props);
-  }
-
-  fetchComments(props) {
-    return $.get(this.url(props)).done(this.onFetch.bind(this));
-  }
-
-  url(props) {
-    //TODO centralize key - pass as prop
-    return `https://www.googleapis.com/youtube/v3/commentThreads?videoId=${props.nowPlaying.id}&part=snippet&key=$(this.props.ytKey}`;
-  }
-
-  onFetch(data) {
-    this.setState({ results: data });
   }
 
   render() {
     var src = `http://www.youtube.com/embed/${this.props.nowPlaying.id}`;
     return (
       <div className='comments'>
-        <ul className="unstyled" id="comments">        
+        <ul className="unstyled" id="comments">
         {
-          this.state.results.items.map(comment => {
+          this.props.comments.items.map(comment => {
             var snippet = comment.snippet.topLevelComment.snippet;
             return (
               <li className="comment" key={comment.id}>

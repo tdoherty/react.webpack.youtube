@@ -12,9 +12,8 @@ export default class SearchLayout extends Component {
     return (
       <div id="mainContent">
         <Search search={this.props.search}/>
-        <SearchResults term={this.props.term} 
-                       onNowPlaying={this.props.onNowPlaying}
-                       ytKey={this.props.ytKey} />
+        <SearchResults onNowPlaying={this.props.onNowPlaying}
+                       searchResults={this.props.searchResults} />
       </div>
     );
   }

@@ -12,8 +12,10 @@ export default class NowPlayingLayout extends Component {
     return (
       <div id="mainContent">
         <Search search={this.props.search}/>
-        <NowPlaying nowPlaying={this.props.nowPlaying} 
-                    ytKey={this.props.ytKey} />
+        <NowPlaying nowPlaying={this.props.nowPlaying}
+                    onNowPlaying={this.props.onNowPlaying}
+                    relatedVideos={this.props.relatedVideos}
+                    comments={this.props.comments} />
       </div>
     );
   }

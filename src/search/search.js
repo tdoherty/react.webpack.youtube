@@ -16,9 +16,7 @@ export default class Search extends Component {
 
   handleTermSubmit(e) {
     e.preventDefault();
-
     this.props.search(this.state.term);
-    // this.setState({term: ""});
   }
 
   render() {

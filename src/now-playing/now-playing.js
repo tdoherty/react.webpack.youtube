@@ -19,11 +19,12 @@ export default class NowPlaying extends Component {
               allowFullScreen style={{'border': '1px solid black'}}></iframe>
             <h4>{this.props.nowPlaying.snippet.title}</h4>
           </div>
-          <Comments nowPlaying={this.props.nowPlaying} />
+          <Comments nowPlaying={this.props.nowPlaying}
+                    comments={this.props.comments} />
         </div>
         <div style={{ 'float': 'left', 'marginLeft': '15px', 'width': '300px' }} className="related">
-            <RelatedVideos nowPlaying={this.props.nowPlaying}
-                           ytKey={this.props.ytKey} />
+            <RelatedVideos onNowPlaying={this.props.onNowPlaying}
+                           relatedVideos={this.props.relatedVideos} />
         </div>
       </div>
     );

@@ -5,6 +5,8 @@ import NowPlayingLayout from './now-playing/layout';
 import Nav from './nav/nav';
 import Container from './container';
 import ContactLayout from './contact/contact';
+import $ from 'jquery';
+import youtube from './youtube';
 
 export default class App extends Component {
 
@@ -15,14 +17,39 @@ export default class App extends Component {
       key: 'AIzaSyCuJFmoItCm1a2QpfAkM2u5yrd-IBD7tQQ',
       layout: SearchLayout,
       results: [],
+      searchResults: [],
+      comments: { items: [] },
+      relatedVideos: [],
       term: "",
       nowPlaying: null,
-      navItems: [ 
-        { title: 'Home', layout: null }, 
-        { title: 'Search', layout: SearchLayout}, 
+      navItems: [
+        { title: 'Home', layout: null },
+        { title: 'Search', layout: SearchLayout},
         { title: 'Contact', layout: ContactLayout}
       ]
     };
+  }
+
+  doSearch(term) {
+    youtube.doSearch(term)
+      .then(youtube.getVideos.bind(this))
+      .then(youtube.onSearchComplete.bind(this))
+      .then(this.setSearchResults.bind(this));
+  }
+
+  getRelatedVideos(videoId) {
+    youtube.getRelatedVideos(videoId)
+      .then(youtube.getVideos.bind(this))
+      .then(youtube.onSearchComplete.bind(this))
+      .then(this.setRelatedVideos.bind(this));
+  }
+
+  setSearchResults(results) {
+    this.setState({ searchResults: results });
+  }
+
+  setRelatedVideos(results) {
+    this.setState({ relatedVideos: results });
   }
 
   onSearch(term) {
@@ -31,16 +58,27 @@ export default class App extends Component {
       nowPlaying: null,
       layout: SearchLayout
     });
+    this.doSearch(term);
   }
 
   onNowPlaying(video) {
-    this.setState({ 
-      nowPlaying: video, 
-      layout: NowPlayingLayout });
+    this.setState({
+      nowPlaying: video,
+      layout: NowPlayingLayout
+    });
+
+    youtube.fetchComments(video.id)
+      .then(this.onCommentsFetched.bind(this))
+
+    this.getRelatedVideos(video.id);
   }
 
   onNavClick(navItem) {
     this.setState({ layout: navItem });
+  }
+
+  onCommentsFetched(data) {
+    this.setState({ comments: data });
   }
 
   render() {
@@ -85,12 +123,14 @@ export default class App extends Component {
                         <div className="span12">
                             <h2>React.Webpack.youtube</h2>
 
-                            <Container layout={this.state.layout} 
-                                       search={this.onSearch.bind(this)} 
-                                       term={this.state.term} 
-                                       onNowPlaying={this.onNowPlaying.bind(this)} 
+                            <Container layout={this.state.layout}
+                                       search={this.onSearch.bind(this)}
+                                       term={this.state.term}
+                                       onNowPlaying={this.onNowPlaying.bind(this)}
                                        nowPlaying={this.state.nowPlaying}
-                                       ytKey={this.state.key} />
+                                       searchResults={this.state.searchResults}
+                                       relatedVideos={this.state.relatedVideos}
+                                       comments={this.state.comments} />
                         </div>
                     </div>
                 </div>
